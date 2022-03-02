@@ -1,3 +1,6 @@
+<?php
+    include_once('config.php');
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -13,7 +16,7 @@
   <body>
     <div class="container">
         <div class="row">
-            <div class="col-8 offset-2">
+            <div class="col-10 offset-1">
                 <div class="mt-5 float-right">
                     <a href="create.php">New Post</a>
                 </div>
@@ -23,16 +26,35 @@
                         <th>Description</th>
                         <th>Action</th>
                     </tr>
+                    <?php
+                        $sql = "SELECT * FROM posts ORDER BY id DESC";
+                        $result = $conn->query($sql);
 
-                    <tr>
-                        <td>BD</td>
-                        <td>This is BD</td>
-                        <td>
-                            <a href="view.php?id=" class="btn btn-primary">View</a> | 
-                            <a href="edit.php?id=" class="btn btn-warning">Edit</a> | 
-                            <a href="delete.php?id=" class="btn btn-danger">Delete</a>
-                        </td>
-                    </tr>
+                        if($result->num_rows > 0)
+                        {
+                            while($row  = $result->fetch_assoc())
+                            {
+                    ?>
+                        <tr>
+                            <td> <?php echo $row['title']; ?> </td>
+                            <td> <?php echo $row['description']; ?> </td>
+                            <td>
+                                <a href="view.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">View</a> | 
+                                <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning">Edit</a> | 
+                                <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    <?php
+                            }
+                        }else{
+                    ?>
+                        <tr>
+                            <td colspan="3" class="text-center text-danger">0 post found!</td>
+                        </tr>
+                    <?php        
+                        }
+                    ?>
+                    
                 </table>
             </div>
         </div>
