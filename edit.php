@@ -1,8 +1,15 @@
 <?php
     include_once('config.php');
 
+    if(!isset($_GET['id']) || !is_numeric($_GET['id']) || $_GET['id'] == NULL){
+        echo "<script>window.location = 'index.php';</script>";
+    }else{
+        $post_id = $_GET['id'];
+    }
+
     if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['update_post'])){
-        $id = $_POST['post_id'];
+        
+        $id = $post_id;
         $title = $_POST['post_title'];
         $description = $_POST['post_description'];
  
@@ -55,8 +62,7 @@
                                 $data = $result->fetch_assoc();
                     ?>
                         
-                                <form action="edit.php" method="POST">
-                                <input type="hidden" name="post_id" value="<?php echo $data['id']; ?>">
+                                <form action="" method="POST">
                                 <div class="form-group">
                                     <label for="postTitle">Post Title</label>
                                     <input id="postTitle" class="form-control" type="text" name="post_title" placeholder="Post Title" value="<?php echo $data['title']; ?>" required>
