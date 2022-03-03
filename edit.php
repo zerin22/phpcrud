@@ -12,12 +12,13 @@
         $id = $post_id;
         $title = $_POST['post_title'];
         $description = $_POST['post_description'];
- 
+        $updated_at  = date('Y-m-d H:i:s');
         
         $sql = "UPDATE `posts` 
                 SET 
                 `title` = '$title',
-                `description` = '$description'
+                `description` = '$description',
+                `updated_at`  = '$updated_at'
                 WHERE `id` = '$id'";
          
          if($conn->query($sql) === TRUE)
