@@ -4,13 +4,70 @@
     if($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['create_post'])){
        $title = $_POST['post_title'];
        $description = $_POST['post_description'];
+    //     echo "<pre>";
+    //    print_r($_FILES['post_image']);
+    //    echo "</pre>";
+    //    exit();
+        //UPLOADING FILE TO SERVER
+       if(isset($_FILES['post_image']) && $_FILES['post_image']['error'] == 0)
+       {
+            $allowed = array(
+                "jpg" => "image/jpg", 
+                "jpeg" => "image/jpeg", 
+                "png" => "image/png"
+            );
 
+            $filename = $_FILES["post_image"]["name"];
+            $filetype = $_FILES["post_image"]["type"]; // image/jpg - image/jpeg - image/ png
+            $filesize = $_FILES["post_image"]["size"];
+
+            // Validate file extension
+            $ext = pathinfo($filename, PATHINFO_EXTENSION); // jpg / jpeg/ png
+            if(!array_key_exists($ext, $allowed)) die("Error: Please select a valid file format.");
+
+            // Validate file size - 700KB maximum 
+            //For megabyte limit 2*1024*1024 =  2MB
+            $maxsize = 0.7 * 1024 *1024;
+            if($filesize > $maxsize) die("Error: File size is larger than the allowed limit.");
+            
+            
+            // Validate type of the file
+            
+            $ft = in_array($filetype, $allowed);
+            
+            if(in_array($filetype, $allowed)){
+                //Check wheather directory is exists
+                $dir = "assets/img/";
+                if (!file_exists($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                // Check whether file exists before uploading it
+                //generating unique file name to conflict with existing file
+                // $rand_1 = random_int(100, 999); 
+                // $rand_2 = random_int(100, 999); 
+                // $rand_3 = str_shuffle($rand_1.$rand_2);
+
+                //Generating unique filename
+                $filename = str_shuffle(time()).'.'.$ext; 
+            }else{
+                echo "Error: There was a problem uploading your file. Please try again."; 
+            }
+        }else{
+            echo "Error: " . $_FILES["anyfile"]["error"];
+        }
        
-       $sql = "INSERT INTO `posts` (`title`, `description`)
-               VALUES ('$title', '$description')";
+        $sql = "INSERT INTO `posts` (`title`, `description`, `image`)
+               VALUES ('$title', '$description', '$filename')";
         
         if($conn->query($sql) === TRUE)
         {
+            //uploading file to server if post quiery is success
+            if(file_exists($dir . $filename)){
+                echo $filename . " is already exists.";
+            }else{
+                move_uploaded_file($_FILES["post_image"]["tmp_name"], $dir . $filename);
+            }
             header("location:index.php");
         }else{
             echo "Error:" .$conn->error;
@@ -39,7 +96,7 @@
                     </div>
                     
                     
-                    <form action="create.php" method="POST">
+                    <form action="create.php" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="postTitle">Post Title</label>
                             <input id="postTitle" class="form-control" type="text" name="post_title" placeholder="Post Title" required>
@@ -49,6 +106,11 @@
                             <label for="postDescription">Post Description</label>
                             <textarea id="postDescription" class="form-control" name="post_description" cols="30" rows="5" placeholder="Post Description"></textarea>
                         </div>
+
+                        <div class="form-group">
+                            <label for="postImage">Image</label>
+                            <input id="postImage" class="form-control" type="file" name="post_image" placeholder="Post Image" required>
+                           </div>
 
                         <div class="form-group">
                             <input type="submit" name="create_post"  class="btn btn-primary float-right" value="POST">

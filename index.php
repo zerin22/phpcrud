@@ -37,8 +37,8 @@
                     ?>
                         <tr>
                             <td> <?php echo $row['title']; ?> </td>
-                            <td> <?php echo $row['description']; ?> </td>
-                            <td>
+                            <td> <?php echo $row['description']; ?> </td>                            
+							<td>
                                 <a href="view.php?id=<?php echo $row['id']; ?>" class="btn btn-primary">View</a> | 
                                 <a href="edit.php?id=<?php echo $row['id']; ?>" class="btn btn-warning">Edit</a> | 
                                 <a href="delete.php?id=<?php echo $row['id']; ?>" class="btn btn-danger">Delete</a>
